@@ -15,32 +15,33 @@ on:
 jobs:
   create_branches:
     runs-on: ubuntu-latest
+    # only run on main branch
+    if: ${{ github.ref == 'refs/heads/main' }}
     steps:
       - name: GitHub Script creates branches
         uses: actions/github-script@v4.0.2
         with:
           script: |
-            // get the "user/repository" environment variable
-            const user_repo = ($GITHUB_REPOSITORY).split('/');
             // get latest commit hash on main
             const commits = await github.repos.listCommits({
-              user_repo[0], // owner
-              user_repo[1]  // repo
+              context.repo.owner,
+              context.repo.repo
             });
             const sha = commits[0].sha;
 
             // create release branch
+            const version = core.getInput('version', { required: true });
             await github.git.createRef({
-              user_repo[0], 
-              user_repo[1],
-              'refs/heads/release-$INPUT_VERSION',
+              context.repo.owner, 
+              context.repo.repo,
+              `refs/heads/release-${version}`,
               sha
             });
 
             // create pre-release branch
             await github.git.createRef({
-              user_repo[0],
-              user_repo[1],
-              'refs/heads/release-$INPUT_VERSION-pre',
+              context.repo.owner, 
+              context.repo.repo,
+              `refs/heads/release-${version}-pre`,
               sha
             });
