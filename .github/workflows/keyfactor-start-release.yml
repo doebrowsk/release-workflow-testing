@@ -15,8 +15,6 @@ on:
 jobs:
   create_branches:
     runs-on: ubuntu-latest
-    # only run on main branch
-    if: ${{ github.ref == 'refs/heads/main' }}
     steps:
       - name: GitHub Script creates branches
       - uses: actions/github-script@v4.0.2
