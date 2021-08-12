@@ -18,6 +18,7 @@ jobs:
     # only run on main branch
     if: ${{ github.ref == 'refs/heads/main' }}
     env:
+      # correct way to pass workflow input variable
       version: ${{ github.event.inputs.version }}
     steps:
       - name: GitHub Script creates branches
@@ -32,24 +33,7 @@ jobs:
             const sha = commits.data[0].sha;
 
             // create release branch
-            console.log('CONTEXT: ---');
-            console.log(context);
-                        
-            console.log('ENV: ---');
-            console.log(process.env);
-            
-            const { version } = process.env;
-            
-            console.log('version: ---');
-            console.log(version);
-            
-            console.log('Trying to access env variable directly ---');
-            console.log($version);
-                        
-            console.log('CONTEXT2: ---');
-            console.log(...context);
-            
-            const version2 = core.getInput('version', { required: true });
+            const { version } = process.env; // correct way to access env variable by name
             await github.git.createRef({
               owner: context.repo.owner, 
               repo: context.repo.repo,
