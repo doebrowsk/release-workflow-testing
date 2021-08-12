@@ -17,6 +17,8 @@ jobs:
     runs-on: ubuntu-latest
     # only run on main branch
     if: ${{ github.ref == 'refs/heads/main' }}
+    env:
+      INPUTS: ${{ github.event.inputs }}
     steps:
       - name: GitHub Script creates branches
         uses: actions/github-script@v4.0.2
@@ -30,6 +32,20 @@ jobs:
             const sha = commits.data[0].sha;
 
             // create release branch
+            console.log('CONTEXT: ---');
+            console.log(context);
+                        
+            console.log('ENV: ---');
+            console.log(process.env);
+            
+            const INPUTS = process.env;
+            
+            console.log('INPUTS: ---');
+            console.log(INPUTS);
+                        
+            console.log('CONTEXT2: ---');
+            console.log(...context);
+            
             const version = core.getInput('version', { required: true });
             await github.git.createRef({
               owner: context.repo.owner, 
