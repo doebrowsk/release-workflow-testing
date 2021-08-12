@@ -17,6 +17,8 @@ jobs:
     runs-on: ubuntu-latest
     # only run on main branch
     if: ${{ github.ref == 'refs/heads/main' }}
+    env:
+      version: ${{ github.event.inputs.version }}
     steps:
       - name: GitHub Script creates branches
         uses: actions/github-script@v4.0.2
@@ -36,18 +38,18 @@ jobs:
             console.log('ENV: ---');
             console.log(process.env);
             
-            const { INPUT_VERSION } = process.env;
+            const { version } = process.env;
             
-            console.log('INPUT_VERSION: ---');
-            console.log(INPUT_VERSION);
+            console.log('version: ---');
+            console.log(version);
             
             console.log('Trying to access env variable directly ---');
-            console.log($INPUT_VERSION);
+            console.log($version);
                         
             console.log('CONTEXT2: ---');
             console.log(...context);
             
-            const version = core.getInput('version', { required: true });
+            const version2 = core.getInput('version', { required: true });
             await github.git.createRef({
               owner: context.repo.owner, 
               repo: context.repo.repo,
