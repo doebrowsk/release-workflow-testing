@@ -27,6 +27,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo
             });
+            console.log(commits);
             const sha = commits[0].sha;
 
             // create release branch
