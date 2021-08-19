@@ -5,6 +5,7 @@ name: Publish draft of GitHub Pages from branch
 
 env:
   MAIN_REPO: ${{ github.repository }} # original repo name
+  DRAFT_REPO: 'draft-github-pages' # target github pages repo for draft
 
 on: 
 # runs on manual dispatch only
@@ -14,10 +15,6 @@ on:
         description: 'The draft branch name of the main GitHub Pages repository'
         required: true
         default: 'draft'
-      draft_repo:
-        description: 'The target repository where the draft branch should be published'
-        required: true
-        default: 'draft-repository-name'
         
 jobs: 
   publish_draft: 
@@ -32,9 +29,7 @@ jobs:
       - name: Mirror repo to draft repo
         shell: bash
         run: |
-          git clone --bare https://github.com/${{ github.repository }}.git
-          ls
-          cd ${{ github.repository.name }}
-          git push --mirror https://github.com/${{ github.repository.owner }}/${{ github.event.inputs.draft_repo }}
+          cd $GITHUB_REPOSITORY
+          git push --mirror https://github.com/${{ github.repository.owner }}/${{ github.env.DRAFT_REPO }}
           
           
