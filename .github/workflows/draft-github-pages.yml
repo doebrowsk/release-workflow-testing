@@ -15,7 +15,7 @@ on:
         required: true
         default: 'draft'
       draft_repo:
-        description: 'The target repository where the draft branch should be published
+        description: 'The target repository where the draft branch should be published'
         required: true
         default: 'draft-${{ env.MAIN_REPO }}'
         
