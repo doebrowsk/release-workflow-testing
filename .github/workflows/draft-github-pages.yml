@@ -29,7 +29,9 @@ jobs:
       - name: Mirror repo to draft repo
         shell: bash
         run: |
-          cd $GITHUB_REPOSITORY
+          ls
+          cd $GITHUB_WORKSPACE
+          ls
           git push --mirror https://github.com/${{ github.repository.owner }}/${{ github.env.DRAFT_REPO }}
           
           
