@@ -1,0 +1,40 @@
+# This workflow publishes a GitHub Pages draft
+# A copy of a GitHub Pages repository branch will be copied to a separate draft-focused repository for publishing under that repository's access control settings
+
+name: Publish draft of GitHub Pages from branch
+
+env:
+  MAIN_REPO: ${{ github.repository }} # original repo name
+
+on: 
+# runs on manual dispatch only
+  workflow_dispatch: 
+    inputs: 
+      draft_branch: 
+        description: 'The draft branch name of the main GitHub Pages repository'
+        required: true
+        default: 'draft'
+      draft_repo:
+        description: 'The target repository where the draft branch should be published
+        required: true
+        default: 'draft-${{ env.MAIN_REPO }}'
+        
+jobs: 
+  publish_draft: 
+    runs-on: ubuntu-latest
+    steps: 
+      - name: Checkout draft branch
+        uses: actions/checkout@v2
+        with: 
+          # use the draft repo input as the checkout target
+          ref: ${{ github.event.inputs.draft_branch }}
+          
+      - name: Mirror repo to draft repo
+        shell: bash
+        run: |
+          git clone --bare https://github.com/${{ github.repository }}.git
+          ls
+          cd ${{ github.repository.name }}
+          git push --mirror https://github.com/${{ github.repository.owner }}/${{ github.event.inputs.draft_repo }}
+          
+          
