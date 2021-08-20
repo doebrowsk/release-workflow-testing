@@ -34,5 +34,6 @@ jobs:
           eval "$(ssh-agent -s)"
           ssh-agent -a $SSH_AUTH_SOCKET > /dev/null
           ssh-add - <<< "${{ secrets.SSH_KEY }}"
-          git push ssh://git@github.com/${{ github.actor }}/${{ env.DRAFT_REPO }} ${{ github.event.inputs.draft_branch }} --force
+          git fetch --unshallow ${{ github.event.inputs.draft_branch }}
+          git push ssh://git@github.com/${{ github.actor }}/${{ env.DRAFT_REPO }} ${{ github.event.inputs.draft_branch }}
           
