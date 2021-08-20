@@ -31,6 +31,7 @@ jobs:
         env:
           SSH_AUTH_SOCKET: /tmp/ssh.sock
         run: |
+          eval "$(ssh-agent -s)"
           ssh-agent -a $SSH_AUTH_SOCKET > /dev/null
           ssh-add - <<< "${{ secrets.SSH_KEY }}"
           git push --mirror https://github.com/${{ github.actor }}/${{ env.DRAFT_REPO }}
