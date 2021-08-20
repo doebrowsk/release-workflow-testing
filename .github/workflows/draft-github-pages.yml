@@ -29,7 +29,7 @@ jobs:
       - name: Mirror repo to draft repo
         shell: bash
         env:
-          SSH_AUTH_SOCKET: /temp/ssh.sock
+          SSH_AUTH_SOCKET: /tmp/ssh.sock
         run: |
           ssh-agent -a $SSH_AUTH_SOCKET > /dev/null
           ssh-add - <<< "${{ secrets.SSH_KEY }}"
