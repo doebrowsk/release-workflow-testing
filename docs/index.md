@@ -5,3 +5,6 @@ This page will serve as the currently published state.
 
 # testing adding changes
 I am now drafting new changes for my GitHub Pages site.
+
+## Drafting new changes
+Second addition to my ongoing draft.
