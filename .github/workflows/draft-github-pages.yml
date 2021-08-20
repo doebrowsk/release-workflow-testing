@@ -28,7 +28,10 @@ jobs:
           
       - name: Mirror repo to draft repo
         shell: bash
+        env:
+          SSH_AUTH_SOCKET: /temp/ssh.sock
         run: |
+          ssh-agent -a $SSH_AUTH_SOCKET > /dev/null
+          ssh-add - <<< "${{ secrets.SSH_KEY }}"
           git push --mirror https://github.com/${{ github.actor }}/${{ env.DRAFT_REPO }}
-          
           
