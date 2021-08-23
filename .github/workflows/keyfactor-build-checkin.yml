@@ -1,0 +1,76 @@
+# This workflow will run automatic builds for checkins to feature branches
+# It runs automtatically for branches that are not main, or release-* branches (including prerelease)
+
+name: Keyfactor - Build .NET Solution
+
+on:
+  push:
+  # don't run on main or release branches
+    branches-ignore:
+      - 'main'
+      - 'release-**'
+      
+jobs:
+  build: 
+    runs-on: windows-latest
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      - name: Setup Envrionment
+        id: setup_env
+        run: |
+            echo "Setup Envrionment Variables for Workflow"
+            echo "Working Path: ${Env:GITHUB_WORKSPACE}"
+            $slnPath = (Get-ChildItem -Include *.sln -File -Recurse).fullname
+            $relName = "${{ github.ref }}".Split("/")
+            $repoName = "${{ github.repository }}".Split("/")
+            $relVersion = "${{ github.ref }}".Split("-")
+            echo "Solution File Path: ${slnPath}"
+            echo "SOLUTION_PATH=${slnPath}" | Out-File $env:GITHUB_ENV -Encoding utf8 -Append
+            echo "Release Name: $($relName[-1])"
+            echo "RELEASE_NAME=$($relName[-1])" | Out-File $env:GITHUB_ENV -Encoding utf8 -Append
+            echo "Repo Name: $($repoName[-1])"
+            echo "REPO_NAME=$($repoName[-1])" | Out-File $env:GITHUB_ENV -Encoding utf8 -Append
+            echo "Release Version: $($relVersion[-1])"
+            echo "RELEASE_VERSION=$($relVersion[-1])" | Out-File $env:GITHUB_ENV -Encoding utf8 -Append
+        
+      - uses: actions/setup-dotnet@v1
+        with:
+            dotnet-version: '3.1.x' # SDK Version to use; x will use the latest version of the 3.1 channel      
+            #dotnet-version: 
+        
+      - name: Add Package Source
+        run: |
+          dotnet nuget add source https://nuget.pkg.github.com/Keyfactor/index.json -n github -u ${{ github.actor }} -p ${{ secrets.BUILD_PACKAGE_ACCESS }} --store-password-in-clear-text
+      
+      # Configures msbuild path envrionment
+      - name: setup-msbuild
+        uses: microsoft/setup-msbuild@v1
+      
+      # Restores Packages to Local Machine
+      - name: restore nuget packages
+        run: |
+          nuget restore ${{ env.SOLUTION_PATH  }}
+      
+      # Runs a set of commands using the runners shell
+      - name: Execute MSBuild Commands
+        run: |
+          MSBuild.exe $Env:SOLUTION_PATH -p:RestorePackagesConfig=true -p:Configuration=Release 
+      - name: Archive Files
+        run: |
+           md ${{ github.workspace }}\zip\Keyfactor
+           Compress-Archive -Path ${{ github.workspace }}\src\GoogleCAProxy\bin\Release\*.dll,${{ github.workspace }}\src\GoogleCAProxy\bin\Release\app.config -DestinationPath ${{ github.workspace }}\zip\Keyfactor\$Env:REPO_NAME.zip -Force
+      
+
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v2.2.2
+        with:
+          # Artifact name
+          name: ${{ env.REPO_NAME }}.zip
+          # A file, directory or wildcard pattern that describes what to upload
+          path: |
+            ${{ github.workspace }}\zip\Keyfactor\${{ env.REPO_NAME}}.zip
+          # The desired behavior if no files are found using the provided path.
+          if-no-files-found: error # optional, default is warn
+    
