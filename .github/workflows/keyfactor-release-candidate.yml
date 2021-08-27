@@ -7,7 +7,7 @@ name: Keyfactor Extension - Release Candidate
 on:
   # Triggers the workflow on PR open
   pull_request:
-    types: [opened]
+    types: [opened, synchronize]
     # only run this workflow when opening PR to release branch
     branches: 
         - '!release-[0-9]+.[0-9]+-rc' 
@@ -33,9 +33,9 @@ jobs:
             echo "Setup Envrionment Variables for Workflow"
             echo "Working Path: ${Env:GITHUB_WORKSPACE}"
             $slnPath = (Get-ChildItem -Include *.sln -File -Recurse).fullname
-            $relName = "${{ github.ref }}".Split("/")
+            $relName = "${{ github.base_ref }}".Split("/")
             $repoName = "${{ github.repository }}".Split("/")
-            $relVersion = "${{ github.ref }}".Split("-")
+            $relVersion = "${{ github.base_ref }}".Split("-")
             echo "Solution File Path: ${slnPath}"
             echo "SOLUTION_PATH=${slnPath}" | Out-File $env:GITHUB_ENV -Encoding utf8 -Append
             echo "Release Name: $($relName[-1])"
@@ -113,10 +113,11 @@ jobs:
         run: |
             $VersionRegex = "\d+\.\d+\.\d+"
             $assemblyInfoFiles = (Get-ChildItem -Include AssemblyInfo.cs -File -Recurse).fullname
+            $newVer = "${{ steps.create_release.outputs.current_tag }}".TrimStart('v').Split('-')[0]
+            echo "Prepared to overwrite Assembly version to: ${newVer}"
             foreach ($assemblyInfoFile in $assemblyInfoFiles)
             {
               $filecontent = Get-Content($assemblyInfoFile)
-              $newVer = "${{ steps.create_release.outputs.current_tag }}".TrimStart('v')
               attrib $assemblyInfoFile -r
               $filecontent -replace $VersionRegex, $newVer | Out-File $assemblyInfoFile
             }
@@ -129,7 +130,7 @@ jobs:
       - name: Archive Files
         run: |
            md ${{ github.workspace }}\zip\Keyfactor
-           Compress-Archive -Path ${{ github.workspace }}\src\GoogleCAProxy\bin\Release\*.dll,${{ github.workspace }}\src\GoogleCAProxy\bin\Release\app.config -DestinationPath ${{ github.workspace }}\zip\Keyfactor\$Env:REPO_NAME.zip -Force
+           Compress-Archive -Path ${{ github.workspace }}\ClassLibrary1\ClassLibrary1\bin\Release\*.dll -DestinationPath ${{ github.workspace }}\zip\Keyfactor\$Env:REPO_NAME.zip -Force
       
 
       - name: Upload a Build Artifact
