@@ -10,7 +10,7 @@ on:
     types: [opened, synchronize]
     # only run this workflow when opening PR to release branch
     branches: 
-        - '!release-[0-9]+.[0-9]+-rc' 
+        - '!release-[0-9]+.[0-9]+-pre' 
         - 'release-[0-9]+.[0-9]+' 
         
   # Release Candidate can be triggered manually
