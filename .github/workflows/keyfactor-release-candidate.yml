@@ -7,7 +7,7 @@ name: Keyfactor Extension - Release Candidate
 on:
   # Triggers the workflow on PR open
   pull_request:
-    types: [opened]
+    types: [opened, synchronize]
     # only run this workflow when opening PR to release branch
     branches: 
         - '!release-[0-9]+.[0-9]+-rc' 
