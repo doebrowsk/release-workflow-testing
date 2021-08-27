@@ -33,9 +33,9 @@ jobs:
             echo "Setup Envrionment Variables for Workflow"
             echo "Working Path: ${Env:GITHUB_WORKSPACE}"
             $slnPath = (Get-ChildItem -Include *.sln -File -Recurse).fullname
-            $relName = "${{ github.base_ref ?? github.ref }}".Split("/")
+            $relName = "${{ github.base_ref }}".Split("/")
             $repoName = "${{ github.repository }}".Split("/")
-            $relVersion = "${{ github.base_ref ?? github.ref }}".Split("-")
+            $relVersion = "${{ github.base_ref }}".Split("-")
             echo "Solution File Path: ${slnPath}"
             echo "SOLUTION_PATH=${slnPath}" | Out-File $env:GITHUB_ENV -Encoding utf8 -Append
             echo "Release Name: $($relName[-1])"
