@@ -3,6 +3,10 @@
 
 name: Keyfactor Extension - Release Candidate
 
+env:
+  SOLUTION_FOLDER: 'ClassLibrary1'
+  PROJECT_FOLDER: 'ClassLibrary1'
+
 # Controls when the action will run. 
 on:
   # Triggers the workflow on PR open
@@ -130,7 +134,9 @@ jobs:
       - name: Archive Files
         run: |
            md ${{ github.workspace }}\zip\Keyfactor
-           Compress-Archive -Path ${{ github.workspace }}\ClassLibrary1\ClassLibrary1\bin\Release\*.dll -DestinationPath ${{ github.workspace }}\zip\Keyfactor\$Env:REPO_NAME.zip -Force
+           Compress-Archive -Path `
+           ${{ env.SOLUTION_FOLDER }}\${{ env.PROJECT_FOLDER }}\bin\Release\*.dll `
+           -DestinationPath ${{ github.workspace }}\zip\Keyfactor\$Env:REPO_NAME.zip -Force
       
 
       - name: Upload a Build Artifact
@@ -152,5 +158,5 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ${{ github.workspace }}\zip\Keyfactor\${{ env.REPO_NAME}}.zip
-          asset_name: ${{ env.REPO_NAME}}.zip
+          asset_name: ${{ env.REPO_NAME}}_${{ steps.create_release.outputs.current_tag }}.zip
           asset_content_type: application/zip                 
