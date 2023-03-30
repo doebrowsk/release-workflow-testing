@@ -7,6 +7,14 @@
     "link_github": true,
     "support_level": "kf-supported",
     "description": "The  PAM Provider allows for the use of secrets as passwords.",
-    "pamRegDLL":  "complete contents"
+    "pamRegDLL":  "complete contents",
+    "about": {
+        "pam": {
+            "assemblyName": "MY-PAM.dll",
+            "dbName": "MY-PAM",
+            "fullyQualifiedClassName": "Keyfactor.Extensions.Pam.MY.PAM",
+            "providerName": "My PAM"
+        }
+    }
   }
   
