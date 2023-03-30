@@ -1,0 +1,12 @@
+{
+    "$schema": "https://keyfactor.github.io/integration-manifest-schema.json",
+    "integration_type": "pam",
+    "name": "MY PAM Provider",
+    "status": "production",
+    "update_catalog": true,
+    "link_github": true,
+    "support_level": "kf-supported",
+    "description": "The  PAM Provider allows for the use of secrets as passwords.",
+    "pamRegDLL":  "complete contents"
+  }
+  
